@@ -56,7 +56,7 @@ const createOrder = async (req, res, next) => {
       verifiedOrderItems.push({
         product: product._id,
         name: product.name,
-        image: product.images && product.images[0] ? product.images[0] : '',
+        image: product.images && product.images[0] ? product.images[0] : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800',
         price: product.price,
         quantity: item.quantity,
       });
@@ -71,13 +71,23 @@ const createOrder = async (req, res, next) => {
     const taxPrice = Math.round(calculatedItemsPrice * 0.08 * 100) / 100;
     const totalPrice = Math.round((calculatedItemsPrice + shippingPrice + taxPrice) * 100) / 100;
 
+    const normalizedShipping = {
+      fullName: shippingAddress.fullName || req.user.name,
+      phone: shippingAddress.phone || req.user.phone || '+15551234567',
+      street: shippingAddress.street,
+      city: shippingAddress.city,
+      state: shippingAddress.state || 'CA',
+      postalCode: shippingAddress.postalCode || shippingAddress.zipCode || '94105',
+      country: shippingAddress.country || 'US',
+    };
+
     const orderNumber = generateOrderNumber();
 
     const order = await Order.create({
       user: req.user._id,
       orderNumber,
       items: verifiedOrderItems,
-      shippingAddress,
+      shippingAddress: normalizedShipping,
       paymentMethod: paymentMethod || 'mock',
       itemsPrice: Math.round(calculatedItemsPrice * 100) / 100,
       taxPrice,

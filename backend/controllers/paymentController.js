@@ -113,10 +113,7 @@ const verifyRazorpayPayment = async (req, res, next) => {
       .update(text)
       .digest('hex');
 
-    const isAuthentic =
-      generatedSignature === razorpay_signature ||
-      process.env.NODE_ENV !== 'production' ||
-      razorpay_signature === 'sandbox_verified_signature';
+    const isAuthentic = (generatedSignature === razorpay_signature);
 
     if (!isAuthentic) {
       return res.status(400).json({

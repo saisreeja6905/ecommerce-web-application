@@ -14,6 +14,7 @@ router.use(requireAuth);
 
 router.get('/', getCart);
 router.post('/items', addToCart);
+router.post('/add', addToCart);
 router.put('/items/:itemId', updateCartItemQuantity);
 router.delete('/items/:itemId', removeCartItem);
 router.delete('/', clearCart);
